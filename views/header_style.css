@@ -1,0 +1,462 @@
+ul {
+    list-style: none;
+}
+
+body {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+.navbar {
+    border: 5px solid #363434;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #dddddd;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    padding: 8px 20px;
+}
+
+.navbar_log {
+    font-size: 32px;
+    font-family: 'Lobster', cursive;
+}
+
+.navbar_log a {
+    color: #000;
+}
+
+.navbar_menu {
+    display: flex;
+    padding-left: 0;
+}
+
+.navbar_menu li {
+    padding: 8px 12px;
+}
+
+.navbar_menu li a {
+    color: #a8a0a0;
+}
+
+.navbar_menu li:hover {
+    background-color: #2b2c2c;
+    border-radius: 4px;
+}
+
+.navbar_icons {
+    color: rgb(0, 0, 0);
+    display: flex;
+    padding-left: 0;
+}
+
+.navbar_icons li {
+    padding: 8px 12px;
+}
+
+.navbar_toogleBtn {
+    display: none;
+    position: absolute;
+    right: 32px;
+    font-size: 24px;
+    color: #b64c00;
+}
+
+/*
+헤더 사진 넣기
+*/
+
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px 24px;
+    }
+
+    .navbar_menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar_icons {
+        display: none; 
+        justify-content: center;
+        width: 100%;
+    }
+
+    .navbar_toogleBtn {
+        display: block;
+    } 
+
+    .navbar_menu.active,
+    .navbar_icons.active {
+        display: flex;
+    }
+} 
+
+
+/*
+전체채팅 전송 버튼
+*/
+
+
+.btn1{
+    text-align: center;
+    background:#1AAB8A;
+    color:#fff;
+    border:none;
+    position:relative;
+    height:60px;
+    font-size:1.0em;
+    padding:0 2em;
+    cursor:pointer;
+    transition:800ms ease all;
+    outline:none;
+    float: right;
+}
+.btn1:hover{
+    background:#94f0da;
+    color:#1AAB8A;
+}
+.btn1:before,button:after{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    height:2px;
+    width:0;
+    background: #18ad8b;
+    transition:400ms ease all;
+}
+.btn1:after{
+    right:inherit;
+    top:inherit;
+    left:0;
+    bottom:0;
+}
+.btn1:hover:before, button:hover:after{
+    width:100%;
+    transition:800ms ease all;
+}
+  
+
+/*/////////////*/
+
+
+.chat {
+    position:relative;
+    border:1px solid #ddd;
+    height:500px;
+    padding: 15px 15px;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 0px;
+    box-shadow: 5px 5px 10px ;
+}
+
+.chat p {
+    font-size: 18px;
+}
+
+.chat form {
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    padding:10px;
+    box-sizing:border-box;
+    border-radius: 50px;
+}
+
+.chat form input[type="text"] {
+    border:0; 
+    padding:0 15px;
+    height:35px;
+    line-height:35px;
+    width:calc(100% - 140px);
+    box-sizing:border-box;
+    outline:none;
+    border-bottom:1px solid #ddd;
+}
+
+.chat form button {
+    border:1px solid #ddd;
+    background-color:#1AA;
+    color:rgb(58, 58, 58);
+    width:100px;height:35px;
+    line-height:33px;
+}
+
+.container_welcome_text {
+    margin-top: 0px;
+}
+
+.welcome_whole_chat {
+    margin-top: 0px;
+    text-shadow: 10px 12px 1px #adadad;
+}
+
+/*/////////*/
+/* 그룹 채팅 */
+
+.group_select_div {
+    text-align: center;
+    margin-top: 8px;
+}
+
+
+.group_div form input[type="text"] {
+    border:0; 
+    padding:0 15px;
+    height:35px;
+    line-height:35px;
+    width:calc(100% - 140px);
+    box-sizing:border-box;
+    outline:none;
+    border-bottom:1px solid #ddd;
+}
+
+.group_div form button {
+    border:1px solid #ddd;
+    background-color:#1AA;
+    color:rgb(58, 58, 58);
+    width:100px;
+    height:35px;
+    line-height:33px;
+
+    margin-left: 20px;
+    float: right;
+}
+
+.group_div {
+    position: relative;
+    border: 1px solid #ddd;
+    padding: 15px 15px;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 47px;
+    box-shadow: 5px 5px 10px ;
+}
+
+.group_div form {
+    padding:10px;
+    box-sizing:border-box;
+    border-radius: 50px;    
+}
+
+.make_room_form button {
+    padding: 0px;
+}
+
+#roomMessages {
+    padding-left: 0px;
+}
+
+.room_form {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.main1 {
+    display: flex; 
+    justify-content: space-between;
+    height: 600px;
+}
+
+.wholeChat {
+    padding-left: 0px;
+}
+
+
+#select {
+    padding: 5px;
+}
+
+/*///////////////*/
+
+.main_img {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.uk_img {
+    width: 400px;
+    height: auto;
+    padding: 10px;
+    margin-left: 0px;
+    margin-top: 10px;
+    border-radius: 10%;
+    border: 3px solid #4e2304;
+    box-shadow: 1px 1px 10px;
+}
+
+.uploaded {
+    text-align: center;
+    margin-top: 70px;
+    margin-bottom: 5px;
+}
+
+/*///////////////*/
+
+.input_file {
+    margin-left: 20px;
+}
+
+.submit_file {
+    float: right;
+    margin-right: 20px;
+}
+
+.file_frame {
+    border: 2px solid rgb(0, 0, 0);
+    box-shadow: 2px 2px 3px;
+}
+
+.file_form {
+    text-align: justify;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/*///////////////*/
+
+.describe {
+    position: relative;
+    border: 7px double #000000;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 0px;
+    height: 400px;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 50px;
+    padding-bottom: 100px;
+    list-style: inside;
+    background-color: #dddddd;
+}
+
+.container_writing {
+    border: 1px solid #000000;
+}
+
+.describe p {
+    font-family: 'Nanum Pen Script', cursive;
+    margin-top: 70px;
+    font-size: 18px;
+}
+
+.uk_tank {
+    float: right;
+    padding: 10px;
+    border: 20px solid #53483d;
+    border-radius: 4px;
+    box-shadow: 1px 1px 10px #000000;
+    margin-top: 70px;
+    margin-left: 5px;
+    width: 400px;
+}
+
+.style-1 {
+    position: relative;
+    top: 50%;
+    left: 35%;
+
+    display: inline;
+    font-family: 'Lobster', cursive;
+    font-size: 200%;
+    padding: 1em 0;
+    text-shadow: 10px 20px 2px #a8a0a0;
+}
+  
+.style-1:before,
+.style-1:after{
+    content:'`';
+  
+    position:absolute;
+    left: -1.2ex;
+    top: 0.2em;
+    width: 1em;
+    height: 1em;
+    font-size:300%;
+      -ms-transform: rotate(-40deg); /* IE 9 */
+      -webkit-transform: rotate(-40deg); /* Chrome, Safari, Opera */
+      transform: rotate(-40deg);}
+  
+.style-1:after{
+    left: auto;
+    right: -1.2ex;
+    top: -0.1em;
+      -ms-transform: rotate(140deg); /* IE 9 */
+      -webkit-transform: rotate(140deg); /* Chrome, Safari, Opera */
+    transform: rotate(140deg);
+}
+
+
+/*///////////////*/
+
+.footer {
+    border: 5px solid #363434;
+    background-color: #dddddd;
+    height: 100px;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    display: flex; 
+}
+
+.divbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.footer_menu {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0px;
+}
+
+.footer_mainName {
+    color: #000;
+    font-size: 32px;
+    font-family: 'Lobster', cursive;
+
+}
+
+.footer_menu li {
+    margin-left: 25px;
+}
+
+.divbar_icons {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0px;
+}
+
+.divbar_icons li {
+    margin-left: 12px;
+}
+
+/*///////////////*/

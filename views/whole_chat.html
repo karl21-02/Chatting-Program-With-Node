@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>whole_chating</title>
+
+        <style>
+            .chat {
+                position:relative;
+                border:1px solid #ddd;
+                height:500px;
+            }
+
+            .chat form {
+                position:absolute;
+                bottom:0;
+                left:0;
+                width:100%;
+                padding:10px;
+                box-sizing:border-box;
+            }
+
+            .chat form input[type="text"] {
+                border:0; 
+                padding:0 15px;
+                height:35px;
+                line-height:35px;
+                width:calc(100% - 140px);
+                box-sizing:border-box;
+                outline:none;
+                border-bottom:1px solid #ddd;
+            }
+
+            .chat form button {
+                border:1px solid #ddd;
+                background-color:rgb(63, 63, 63);
+                color:rgb(252, 252, 252);
+                width:100px;height:35px;
+                line-height:33px;
+                margin-left:20px;
+            }
+
+            #messages {
+                height:calc(500px - 58px);
+                overflow-y:scroll;
+            }
+
+        </style>
+
+        <script>
+            $(function () {
+                var socket = io();
+
+                var name = "";
+                let room = [ 'Room1', 'Room2' ];
+                let num = 0;
+
+                socket.on("connect", function() {
+                    name = prompt("이름을 입력해주세요! ", '');
+
+                    if(!name) {
+                        name = 'anonymous';
+                    }
+
+                    socket.emit("newUser", name);
+                    socket.emit("user_connect", name);
+                })
+
+                $('.whole').submit(function(e){
+                    e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+                    socket.emit('chat message', {message : $('#m').val(), user_name : name}); // "chat message"라는 이벤트 생성
+                    $('#m').val(''); // 보낸 메세지 초기화
+                    return false;
+                });
+
+                socket.on('chat message', function(msg){
+                    var tag = "<li>" + msg.user_name + ": " + msg.message + "</li>";
+                    $(".wholeChat").append(tag);
+                });
+
+                // 사용자 로그인 정보 출력
+                socket.on('user_connect', function(user_name) {
+                    var tag = "<li>" + user_name + "님이 접속하였습니다." + "</li>";
+                    $(".wholeChat").append(tag);
+                });
+
+                socket.on('update', function(data) {
+                    socket.name = data.user_name;
+                    console.log(data.name);
+
+                });
+
+                ////////////////////////////////////////////////////////////////////////
+
+                socket.emit('joinRoom', num, name);
+
+                $('select').change(() => {
+                    socket.emit('leaveRoom', num, name);
+
+                    if(num == 0) {
+                        num = 1;
+                    }
+                    else {
+                        num = 0;
+                    }
+
+                    socket.emit('joinRoom', num, name);
+                });
+
+                $('.room_form').submit(function(e) {
+                    e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+                    if($('#select').val() == "Room1") {
+                        num = 0;
+                    }
+                    else if($('#select').val() == "Room2") {
+                        num = 1;
+                    }
+                    socket.emit('roomChat', num, name, $('#m1').val());
+                    $('#m1').val('');
+                    return false;
+                });
+
+                //////////////////////////////////////////////////////////////////////////////////
+
+                $('.make_room_form').submit(function(e) {
+                    e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+
+                    var new_room_name = $('.make_room').val();
+                    room.push(new_room_name);
+                    socket.emit("make_room", new_room_name);
+                    return false;
+                });
+
+                socket.on("make_room", function(new_room_name) {
+                    let selectEl = document.querySelector("#select");
+                    $("#select").append("<option value='"+ (selectEl.length+1)+"'>"+ new_room_name +"</option>");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="chat">
+            <p>전체 채팅에 오신 것을 환영합니다!</p>
+            <ul id="messages" class="wholeChat"></ul>
+            <form action="" class="whole">
+                <input type="text" id="m" autocomplete="off" placeholder="입력해주세요 :D" /><button class="btn1">전송</button>
+            </form>
+        </div>
+    </body>
+</html>

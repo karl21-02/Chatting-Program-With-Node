@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+<head>
+    <title>블라썸 채팅</title>
+
+    <link rel="stylesheet" type="text/css" href="/header_style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/views/client.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://kit.fontawesome.com/65eed5b550.js" crossorigin="anonymous"></script>
+    <script>
+        $(function () {
+            var socket = io.connect('http://localhost:3000');
+    
+            var name = "";
+            let room = [ 'Room1', 'Room2' ];
+            let num = 0;
+    
+            socket.on("connect", function() {
+                name = prompt("이름을 입력해주세요! ", '');
+    
+                if(!name) {
+                    name = 'anonymous';
+                }
+    
+                socket.emit("newUser", name);
+                socket.emit("user_connect", name);
+            })
+    
+            $('.whole').submit(function(e){
+                e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+                socket.emit('chat message', {message : $('#m').val(), user_name : name}); // "chat message"라는 이벤트 생성
+                $('#m').val(''); // 보낸 메세지 초기화
+                
+                return false;
+            });
+    
+            socket.on('chat message', function(msg){
+                var tag = "<li>" + msg.user_name + ": " + msg.message + "</li>";
+                // $(".wholeChat").append(tag);
+                $(tag).prependTo('#messages');
+            });
+    
+            // 사용자 로그인 정보 출력
+            socket.on('user_connect', function(user_name) {
+                var tag = "<li>" + user_name + "님이 접속하였습니다." + "</li>";
+                $(".wholeChat").append(tag);
+            });
+    
+            socket.on('update', function(data) {
+                socket.name = data.user_name;
+                console.log(data.name);
+    
+            });
+    
+            ////////////////////////////////////////////////////////////////////////
+    
+            socket.emit('joinRoom', num, name);
+    
+            $('select').change(() => {
+                socket.emit('leaveRoom', num, name);
+    
+                if(num == 0) {
+                    num = 1;
+                }
+                else {
+                    num = 0;
+                }
+    
+                socket.emit('joinRoom', num, name);
+            });
+    
+            $('.room_form').submit(function(e) {
+                e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+                if($('#select').val() == "Room1") {
+                    num = 0;
+                }
+                else if($('#select').val() == "Room2") {
+                    num = 1;
+                }
+                socket.emit('roomChat', num, name, $('#m1').val());
+                $('#m1').val('');
+                return false;
+            });
+    
+            //////////////////////////////////////////////////////////////////////////////////
+    
+            $('.make_room_form').submit(function(e) {
+                e.preventDefault(); // prevents page reloading ( 페이지 새로고침 막기 )
+    
+                var new_room_name = $('#make_room').val();
+                room.push(new_room_name);
+                socket.emit("make_room", new_room_name);
+                return false;
+            });
+    
+            socket.on("make_room", function(new_room_name) {
+                let selectEl = document.querySelector("#select");
+                $("#select").append("<option value='"+ (selectEl.length+1)+"'>"+ new_room_name +"</option>");
+            });
+    
+            ////////////////////////////////////////////////////////////////////////////////////
+    
+            socket.on('roomChat', (name, msg) => {
+                $('#roomMessages').append($('<li>').text(name + ' : ' + msg));
+            });
+    
+            socket.on('leaveRoom', (num, name) => {
+                $('#roomMessages').append($('<li>').text(name + '    leaved  ' + room[num] + ' :('));
+                console.log(name + " leaveRoom");
+            });
+            
+            socket.on('joinRoom', (num, name) => {
+                $('#roomMessages').append($('<li>').text(name + '    joined ' + room[num] + ' :)'));
+                console.log(name + " joinRoom");
+            });
+        });
+    </script>
+</head>
+<body>
+    <header id="header">
+        <nav class="navbar">
+            <div class="navbar_log">
+                <a href="">Blossom</a>
+            </div>
+
+            <ul class="navbar_menu">
+                <li><a href="">메인</a></li>
+                <li><a href="">개인 채팅</a></li>
+                <li><a href="/whole_chat.html">전체 채팅</a></li>
+                <li><a href="">설정 & 도움말</a></li>
+                <li><a href="">FAQ</a></li>
+            </ul>
+
+            <ul class="navbar_icons">
+                <li><i class="fa-brands fa-affiliatetheme"></i></li>
+                <li><i class="fa-brands fa-apple"></i></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main1">
+        <div class="main_img">
+            <div class="file_frame">
+                <form method="POST" action="/index" enctype="multipart/form-data" class="file_form">
+                    <input type="file" name="image" class="input_file">
+                    <input type="submit" class="submit_file">
+                </form> 
+            </div>
+            <h1 class="uploaded">Слава Україні!</h1>
+            <img src="/Images/ukraine_disater.jpeg" class="uk_img" onerror="alert('에러발생')">
+        </div>
+
+        <div class="chat">
+            <h3 class="welcome_whole_chat">전체 채팅에 오신 것을 환영합니다!</h3>
+
+            <hr>
+
+            <ul id="messages" class="wholeChat"></ul>
+            <form action="" class="whole">
+                <input type="text" id="m" autocomplete="off" placeholder="입력해주세요 :D" />
+                <button class="btn1">전송</button>
+            </form>
+        </div>
+        
+        <div class="group_div">
+            <div class="group_select_div">
+                <div class="select_div">
+                    <select id="select">
+                        <option value="Room1">Room1</option>
+                        <option value="Room2">Room2</option>
+                    </select>
+                </div>
+            </div>
+            <form class="make_room_form">
+                <input type="text" id="make_room" autocomplete="off" placeholder="방 이름을 입력해주세요">
+                <button class="btn1">방 만들기</button>
+            </form>
+
+            <hr style="color: black;">
+    
+            <ul id="roomMessages"></ul>
+            <form class="room_form">
+                <input type="text" id="m1" autocomplete="off" placeholder="입력해주세요 :D">
+                <button class="btn1">전송</button>
+            </form>    
+        </div>
+    </main>
+    <main>
+        <div class="describe">
+            <div id="container_writing">
+                <h1 class="style-1">Слава Україні!</h1>
+            </div>
+            <img src="/Images/uk_tank.jpg" class="uk_tank" onerror="alert('에러발생')">
+    
+            <p class="writing_contents">  2022년 2월 24일 우크라이나 전쟁이 발발되었다. 러시아의 무차별적인 폭격과 제네바 협약에서 엄격히 금지된 민간인에대한 
+                무차별적인 공격을 러시아군이 감행하며 수 많은 민간인이 희생되었다. 개인적인 친분이 없더라도 같은 인간이기에, 알 수 있는 죽음속의 외침은 이 글을
+                쓰게 했다. 러시아군의 우크라이나 침략으로 희생된 수 많은 사람들이 부디 평화속에 잠들길 REST IN PEACE <br> 자신의 조국을 지키기위해 목숨 걸고 싸우다
+                전사한 수 많은 무명의 우크라이나 군인들을 위해, 그들이 바친 목숨 위해 피어날 민주주의를 위해, 그리고 사회주의 국가 러시아의 탈사회주의를 위해 이 글을 
+                우크라이나 전쟁에서 희생된 모든 분에게 바침니다. <br> 존경합니다. 우크라이나를 선두에서 이끌고있는 리더 젤렌스키 대통령님. "내겐 죽음 겁낼 권리 없다" 
+                여러 차례 러시아의 암살 위협에도 수도에 남아 승리를 이끌어갔다. 2022년 3월 8일 미국 의회 연설에서 젤렌스키 대통령은 윈스턴 처칠의 연설을 인용해 "우리는 포기하지
+                않을 것이고, 패배하지 않을 것이다. 우리는 숲에서, 들판에서, 해변에서, 그리고 거리에서 싸울 것이다"라고 말했다. 젤렌스키 대통령은 22세기 처칠인것 같다. 우크라이나가
+                이번 전쟁에서 승리를 가져가길 빈다. 모든 무명 용사들이여 평화속에 편히 잠들기, Слава Україні!
+            </p>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="divbar">
+            <nav>
+                <a href="" class="footer_mainName">Blossom</a>
+            </nav>
+            <ul class="footer_menu">
+                <li>Developer : Karl</li>
+                <li>Designer : WooJK</li>
+                <li>xxxxxxxxxxx@gmail.com</li>
+                <li>010-xxxx-xxxx</li>
+            </ul>
+
+            <ul class="divbar_icons">
+                <li><i class="fa-brands fa-affiliatetheme"></i></li>
+                <li><i class="fa-brands fa-apple"></i></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>
